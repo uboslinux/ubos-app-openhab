@@ -1,0 +1,16 @@
+_user="openhab"
+
+post_install() {
+    fixPermissions
+}
+
+post_upgrade() {
+    fixPermissions
+}
+
+fixPermissions() {
+	chown -R ${_user}:${_user} /etc/openhab
+	chown -R ${_user}:${_user} /usr/share/openhab
+	chown -R ${_user}:${_user} /var/lib/openhab
+	chown -R ${_user}:${_user} /var/log/openhab
+}

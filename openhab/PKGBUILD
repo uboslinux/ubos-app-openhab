@@ -1,0 +1,44 @@
+# From AUR, adapted for UBOS: https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=openhab2
+developer='http://www.openhab.org/'
+url=${developer}
+maintainer=http://indiecomputing.com/
+pkgname=$(basename $(pwd))
+pkgver=2.1.0
+pkgrel=1
+pkgdesc="Home automation software"
+arch=('any')
+license=('EPL')
+depends=('java-runtime-headless=8')
+install=openhab.install
+
+backup=('etc/openhab/services/addons.cfg'
+		'etc/openhab/services/runtime.cfg')
+# install="openhab.install"
+
+source=(
+    "openhab-${pkgver}.tar.gz::https://bintray.com/openhab/mvn/download_file?file_path=org%2Fopenhab%2Fdistro%2Fopenhab%2F${pkgver}%2Fopenhab-${pkgver}.tar.gz")
+
+sha512sums=('bcb7f10e302707fe28e6c21ed3aeec7f171fe6261ca9bec4e498b13b9a3874e3ac820486d7388287c977aeb27ec7c81fd471fe2b2297825c452e72c57d44d1ca')
+
+prepare() {
+	patch -p1 < ../openhab.patch
+}
+
+package() {
+    install -Dm644 ${startdir}/openhab.default ${pkgdir}/etc/default/openhab
+    install -Dm644 ${startdir}/openhab.service ${pkgdir}/usr/lib/systemd/system/openhab.service
+
+    mkdir -p ${pkgdir}/etc/openhab
+    cp -a ${srcdir}/conf/* -t ${pkgdir}/etc/openhab/
+
+    mkdir -p ${pkgdir}/var/lib/openhab
+    cp -a ${srcdir}/userdata/* ${pkgdir}/var/lib/openhab/
+
+    mkdir -p ${pkgdir}/usr/share/openhab
+    cp -a ${srcdir}/* ${pkgdir}/usr/share/openhab/
+    rm -fr ${pkgdir}/usr/share/openhab/{conf,userdata}
+
+	mkdir -p ${pkgdir}/var/log/openhab
+
+    install -Dm644 ${startdir}/openhab.sysusers.conf ${pkgdir}/usr/lib/sysusers.d/openhab.conf
+}
