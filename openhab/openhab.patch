@@ -15,7 +15,7 @@ diff -ura openhab2.orig/runtime/bin/oh2_dir_layout openhab2.new/runtime/bin/oh2_
  
  if [ -z ${OPENHAB_USERDATA} ]; then
 -    export OPENHAB_USERDATA="${OPENHAB_HOME}/userdata"
-+    export OPENHAB_USERDATA="/var/lib/openhab"
++    export OPENHAB_USERDATA="/ubos/lib/openhab"
  fi
  
  if [ -z ${OPENHAB_LOGDIR} ]; then

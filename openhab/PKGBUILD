@@ -1,10 +1,10 @@
-# From AUR, adapted for UBOS: https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=openhab2
 developer='http://www.openhab.org/'
 url=${developer}
 maintainer=http://indiecomputing.com/
 pkgname=$(basename $(pwd))
-pkgver=2.1.0
+pkgver=2.2.0
 pkgrel=1
+_snap=
 pkgdesc="Home automation software"
 arch=('any')
 license=('EPL')
@@ -16,29 +16,35 @@ backup=('etc/openhab/services/addons.cfg'
 # install="openhab.install"
 
 source=(
-    "openhab-${pkgver}.tar.gz::https://bintray.com/openhab/mvn/download_file?file_path=org%2Fopenhab%2Fdistro%2Fopenhab%2F${pkgver}%2Fopenhab-${pkgver}.tar.gz")
-
-sha512sums=('bcb7f10e302707fe28e6c21ed3aeec7f171fe6261ca9bec4e498b13b9a3874e3ac820486d7388287c977aeb27ec7c81fd471fe2b2297825c452e72c57d44d1ca')
+    "openhab-${pkgver}.tar.gz::https://bintray.com/openhab/mvn/download_file?file_path=org%2Fopenhab%2Fdistro%2Fopenhab%2F${pkgver}%2Fopenhab-${pkgver}${_snap}.tar.gz")
+sha512sums=('3ea8110d4c6289732860c611b78b1955d6024d19bcf168d53d00a82e8cd8dc43936a5a9dc5c35840c436fa40085f9b1ce98654b0edaa04169ae39c86a606fccd')
 
 prepare() {
 	patch -p1 < ../openhab.patch
 }
 
 package() {
-    install -Dm644 ${startdir}/openhab.default ${pkgdir}/etc/default/openhab
-    install -Dm644 ${startdir}/openhab.service ${pkgdir}/usr/lib/systemd/system/openhab.service
+# Manifest
+    install -D -m0644 ${startdir}/ubos-manifest.json ${pkgdir}/ubos/lib/ubos/manifests/${pkgname}.json
+
+# Icons
+#    install -D -m0644 ${startdir}/appicons/{72x72,144x144}.png -t ${pkgdir}/ubos/http/_appicons/$pkgname/
+
+# Defaults - same for all appconfigs
+    install -D -m0644 ${startdir}/openhab.default ${pkgdir}/etc/default/openhab
+
+# Systemd
+    install -D -m644 ${startdir}/systemd/*.service -t ${pkgdir}/usr/lib/systemd/system/
 
     mkdir -p ${pkgdir}/etc/openhab
-    cp -a ${srcdir}/conf/* -t ${pkgdir}/etc/openhab/
 
-    mkdir -p ${pkgdir}/var/lib/openhab
-    cp -a ${srcdir}/userdata/* ${pkgdir}/var/lib/openhab/
+    mkdir -p ${pkgdir}/ubos/lib/openhab
+    mkdir -p ${pkgdir}/var/log/openhab
 
-    mkdir -p ${pkgdir}/usr/share/openhab
-    cp -a ${srcdir}/* ${pkgdir}/usr/share/openhab/
-    rm -fr ${pkgdir}/usr/share/openhab/{conf,userdata}
+    mkdir -p ${pkgdir}/ubos/share/openhab
+    cp -a ${srcdir}/{LICENSE.TXT,runtime} ${pkgdir}/ubos/share/openhab/
 
 	mkdir -p ${pkgdir}/var/log/openhab
 
-    install -Dm644 ${startdir}/openhab.sysusers.conf ${pkgdir}/usr/lib/sysusers.d/openhab.conf
+    install -Dm644 ${startdir}/systemd/openhab.sysusers.conf ${pkgdir}/usr/lib/sysusers.d/openhab.conf
 }

@@ -10,7 +10,7 @@ post_upgrade() {
 
 fixPermissions() {
 	chown -R ${_user}:${_user} /etc/openhab
-	chown -R ${_user}:${_user} /usr/share/openhab
-	chown -R ${_user}:${_user} /var/lib/openhab
+	chown -R ${_user}:${_user} /ubos/share/openhab
+	chown -R ${_user}:${_user} /ubos/lib/openhab
 	chown -R ${_user}:${_user} /var/log/openhab
 }

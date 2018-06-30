@@ -8,10 +8,8 @@ After=syslog.target network.target
 EnvironmentFile=/etc/default/openhab
 User=openhab
 Group=openhab
-WorkingDirectory=/usr/share/openhab
-#PermissionsStartOnly=true
-#ExecStartPre=/usr/share/openhab/bin/setpermissions.sh
-ExecStart=/usr/share/openhab/start.sh server
+WorkingDirectory=/var/lib/openhab
+ExecStart=/usr/share/openhab/runtime/bin/karaf
 ExecStop=/usr/share/openhab/runtime/bin/stop
 # Shutdown delay in seconds, before process is tried to be killed with KILL (if configured)
 TimeoutStopSec=120
